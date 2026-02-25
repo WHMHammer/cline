@@ -8,14 +8,14 @@ interface RetryOptions {
 }
 
 const DEFAULT_OPTIONS: Required<RetryOptions> = {
-	maxRetries: 3,
+	maxRetries: 0,
 	baseDelay: 1_000,
 	maxDelay: 10_000,
 	retryAllErrors: false,
 }
 
 export class RetriableError extends Error {
-	status: number = 429
+	status = 429
 	retryAfter?: number
 
 	constructor(message: string, retryAfter?: number, options?: ErrorOptions) {
@@ -56,7 +56,7 @@ export function withRetry(options: RetryOptions = {}) {
 					let delay: number
 					if (retryAfter) {
 						// Handle both delta-seconds and Unix timestamp formats
-						const retryValue = parseInt(retryAfter, 10)
+						const retryValue = Number.parseInt(retryAfter, 10)
 						if (retryValue > Date.now() / 1000) {
 							// Unix timestamp
 							delay = retryValue * 1000 - Date.now()
